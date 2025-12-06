@@ -33,3 +33,62 @@ The project demonstrates:
 * **Battery pack**
 * **Wires, mounts, bolts, chassis**
 * **Breadboard**
+
+Вот аккуратный и грамотно оформленный перевод на английский:
+
+---
+
+## ⚙️ Robot Assembly
+
+1. Assemble the chassis and attach the motors.
+2. Install the L298N motor driver.
+3. Connect the motors to the L298N outputs.
+4. Connect the line sensors to the Arduino analog/digital pins.
+5. Mount the obstacle sensor at the front.
+6. Install the Bluetooth module.
+7. Connect the Bluetooth module to the Arduino.
+8. Connect the power supply (battery → motor driver → Arduino).
+9. Upload the Arduino code.
+
+**Main functions of the code:**
+
+* Reading IR line sensors
+* Obstacle detection
+* Motor control logic: movement, turning, stopping
+* Obstacle avoidance algorithm
+
+---
+
+## Result
+
+The robot successfully performs:
+
+* precise line following
+* detection of line gaps
+* obstacle detection
+* obstacle avoidance with return to the line
+
+The result demonstrates the fundamentals of robotics: sensor integration, microcontroller programming, mechanics, and control logic.
+
+---
+
+##  Possible Improvements
+
+* add more line sensors for higher accuracy
+* improve the obstacle avoidance algorithm
+* replace the motor driver with a more compact module
+* switch to Li-ion batteries
+* create a custom 3D-printed body
+
+---
+
+##  Authors
+
+Project contributors:
+
+* **Berdibekova Zhasmina**
+* **Subanova Milena**
+* **Kasmaly kyzy Fatima**
+
+---
+
