@@ -1,4 +1,4 @@
-**Line Follower Robot with Obstacle Avoidance**
+##Line Follower Robot with Obstacle Avoidance**
 
 This robot follows a black line and avoids obstacles. It was assembled using the video tutorial below:
 
