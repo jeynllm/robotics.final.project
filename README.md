@@ -36,7 +36,7 @@ The project demonstrates:
 * **Wires, mounts, bolts, chassis**
 * **Breadboard**
 
-Вот аккуратный и грамотно оформленный перевод на английский:
+
 
 ---
 
