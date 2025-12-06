@@ -3,6 +3,7 @@
 This robot follows a black line and avoids obstacles. It was assembled using the video tutorial below:
 
 [https://www.youtube.com/watch?v=4PQgjjOqJa4](https://www.youtube.com/watch?v=4PQgjjOqJa4)
+presentation - 
 
 ## **Project Description**
 
@@ -38,7 +39,7 @@ The project demonstrates:
 
 ---
 
-## ⚙️ Robot Assembly
+##  Robot Assembly
 
 1. Assemble the chassis and attach the motors.
 2. Install the L298N motor driver.
