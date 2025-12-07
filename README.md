@@ -35,6 +35,7 @@ The project demonstrates:
 * **Battery pack**
 * **Wires, mounts, bolts, chassis**
 * **Breadboard**
+* **Bluetooth**
 
 
 
