@@ -1,0 +1,264 @@
+
+ *  SMART ROBOT CAR WITH BLUETOOTH + LINE FOLLOWING
+ *  AND OBSTACLE AVOIDANCE
+ *
+ *  Hardware:
+ *   - Arduino UNO / similar
+ *   - Motor Driver L298N
+ *   - HC-05 Bluetooth module
+ *   - Ultrasonic Sensor (Trigger/Echo)
+ *   - IR Line Sensors (Left / Right)
+ *   - Servo Motor (for rotating ultrasonic)
+ *
+ *  Functionality:
+ *   ✔ Auto mode: line following + obstacle avoidance
+ *   ✔ Manual mode: Bluetooth control (F/B/L/R/STOP)
+ *   ✔ Servo-based side scanning
+
+
+#include <SoftwareSerial.h>
+
+// BLUETOOTH HC-05 SETUP
+SoftwareSerial BT(2, 3);   // RX, TX
+
+// MOTOR DRIVER L298N PINS 
+#define enA 10 
+#define in1 9 
+#define in2 8 
+#define in3 7
+#define in4 6 
+#define enB 5
+
+// SENSOR PINS 
+#define L_S A0       // Left IR sensor
+#define R_S A1       // Right IR sensor
+#define echo A2      // Ultrasonic echo pin
+#define trigger A3   // Ultrasonic trigger pin
+#define servo A5     // Servo signal pin
+
+// GLOBAL VARIABLES
+int distance_L, distance_F, distance_R;
+int Set = 15;                 // Distance threshold (cm)
+String command = "";          // Bluetooth command buffer
+bool AUTO_MODE = true;        // Default mode is AUTO
+
+
+ *  SERVO PULSE FUNCTION (manual servo control)
+
+void servoPulse(int pin, int angle) {
+  int pwm = (angle * 11) + 500;   // Convert angle → pulse width
+  digitalWrite(pin, HIGH);
+  delayMicroseconds(pwm);
+  digitalWrite(pin, LOW);
+  delay(30);
+}
+
+
+ *  ULTRASONIC MEASUREMENT
+
+int Ultrasonic_read() {
+  long duration, distance;
+
+  digitalWrite(trigger, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigger, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigger, LOW);
+
+  duration = pulseIn(echo, HIGH);
+  distance = duration * 0.034 / 2;   // Convert to cm
+
+  return distance;
+}
+
+
+ *  BASIC MOVEMENT FUNCTIONS
+
+void forward() {
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+}
+
+void back() {
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+}
+
+void turnLeft() {
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+}
+
+void turnRight() {
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+}
+
+void Stop() {
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
+}
+
+
+ *  SIDE CHECKING VIA SERVO (SCAN LEFT/RIGHT)
+
+void compareDistance() {
+  if (distance_L > distance_R) {
+    turnLeft();
+    delay(500);
+    forward();
+    delay(600);
+    turnRight();
+    delay(500);
+    forward();
+    delay(600);
+    turnRight();
+    delay(400);
+  }
+  else {
+    turnRight();
+    delay(500);
+    forward();
+    delay(600);
+    turnLeft();
+    delay(500);
+    forward();
+    delay(600);
+    turnLeft();
+    delay(400);
+  }
+}
+
+void Check_side() {
+  Stop();
+  delay(100);
+
+  // Scan right (70–140 degrees)
+  for (int a = 70; a <= 140; a += 5)
+    servoPulse(servo, a);
+  
+  delay(300);
+  distance_R = Ultrasonic_read();
+
+  // Scan left (140–0 degrees)
+  for (int a = 140; a >= 0; a -= 5)
+    servoPulse(servo, a);
+
+  delay(300);
+  distance_L = Ultrasonic_read();
+
+  // Return servo to middle
+  for (int a = 0; a <= 70; a += 5)
+    servoPulse(servo, a);
+
+  compareDistance();
+}
+
+
+ *  BLUETOOTH COMMAND HANDLING
+
+void readBluetooth() {
+  if (BT.available()) {
+    char c = BT.read();
+
+    if (c == '\n' || c == '\r') {
+      processCommand(command);
+      command = "";
+    } 
+    else {
+      command += c;
+    }
+  }
+}
+
+void processCommand(String cmd) {
+  cmd.toLowerCase();
+
+  if (cmd == "auto") {
+    AUTO_MODE = true;
+    BT.println("AUTO mode enabled");
+  }
+  else if (cmd == "manual") {
+    AUTO_MODE = false;
+    Stop();
+    BT.println("MANUAL mode enabled");
+  }
+  else if (!AUTO_MODE) {
+    if (cmd == "forward" || cmd == "f") forward();
+    else if (cmd == "back" || cmd == "b") back();
+    else if (cmd == "left" || cmd == "l") turnLeft();
+    else if (cmd == "right" || cmd == "r") turnRight();
+    else if (cmd == "stop" || cmd == "s") Stop();
+  }
+}
+
+
+ *  SETUP
+
+void setup() {
+  Serial.begin(9600);
+  BT.begin(9600);
+
+  pinMode(R_S, INPUT);
+  pinMode(L_S, INPUT);
+  pinMode(echo, INPUT);
+  pinMode(trigger, OUTPUT);
+
+  pinMode(enA, OUTPUT);
+  pinMode(enB, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+  pinMode(servo, OUTPUT);
+
+  analogWrite(enA, 200);   // Motor speed
+  analogWrite(enB, 200);
+
+  // Servo sweep initialization
+  for (int a = 70; a <= 140; a += 5) servoPulse(servo, a);
+  for (int a = 140; a >= 0; a -= 5) servoPulse(servo, a);
+  for (int a = 0; a <= 70; a += 5) servoPulse(servo, a);
+}
+
+
+ *  MAIN LOOP
+
+void loop() {
+  readBluetooth();
+
+  if (!AUTO_MODE) return;   // Skip auto logic if in manual mode
+
+  distance_F = Ultrasonic_read();
+
+  // Line following + obstacle avoidance
+  if (digitalRead(R_S) == 0 && digitalRead(L_S) == 0) {
+    if (distance_F > Set) 
+      forward();
+    else 
+      Check_side();
+  }
+  else if (digitalRead(R_S) == 1 && digitalRead(L_S) == 0) {
+    turnRight();
+  }
+  else if (digitalRead(R_S) == 0 && digitalRead(L_S) == 1) {
+    turnLeft();
+  }
+
+  delay(10);
+}
