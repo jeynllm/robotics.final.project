@@ -68,3 +68,41 @@ for(int a=0; a<=70; a+=5)
 servoPulse(servo, a); 
 compareDistance(); 
 }
+// === BLUETOOTH ===
+void readBluetooth(){
+  if(BT.available()){
+    char c = BT.read();
+
+
+    // Fix:OR
+    if(c == '\n' || c == '\r'){
+      processCommand(command);
+      command = "";
+    } else {
+      command += c;
+    }
+  }
+}
+
+
+void processCommand(String cmd){
+  cmd.toLowerCase();
+
+
+  if(cmd == "auto"){
+    AUTO_MODE = true;
+    BT.println("AUTO mode enabled");
+  }
+  else if(cmd == "manual"){
+    AUTO_MODE = false;
+    Stop();
+    BT.println("MANUAL mode enabled");
+  }
+  else if(!AUTO_MODE){
+    if(cmd == "forward" || cmd == "f") forward();
+    else if(cmd == "back" || cmd == "b") back();
+    else if(cmd == "left" || cmd == "l") turnLeft();
+    else if(cmd == "right" || cmd == "r") turnRight();
+    else if(cmd == "stop" || cmd == "s") Stop();
+  }
+}
