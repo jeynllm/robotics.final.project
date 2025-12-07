@@ -68,7 +68,7 @@ for(int a=0; a<=70; a+=5)
 servoPulse(servo, a); 
 compareDistance(); 
 }
-// === BLUETOOTH ===
+// added Bluetooth command reading and manual control processing
 void readBluetooth(){
   if(BT.available()){
     char c = BT.read();
@@ -106,3 +106,33 @@ void processCommand(String cmd){
     else if(cmd == "stop" || cmd == "s") Stop();
   }
 }
+// added setup routine for initializing sensors, motors, servo and communication
+void setup(){
+  Serial.begin(9600);
+  BT.begin(9600);
+
+
+  pinMode(R_S, INPUT);
+  pinMode(L_S, INPUT);
+  pinMode(echo, INPUT);
+  pinMode(trigger, OUTPUT);
+
+
+  pinMode(enA, OUTPUT);
+  pinMode(enB, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+  pinMode(servo, OUTPUT);
+
+
+  analogWrite(enA, 200);
+  analogWrite(enB, 200);
+
+
+  for(int a=70; a<=140; a+=5) servoPulse(servo, a);
+  for(int a=140; a>=0; a-=5) servoPulse(servo, a);
+  for(int a=0; a<=70; a+=5) servoPulse(servo, a);
+}
+
