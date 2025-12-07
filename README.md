@@ -4,7 +4,10 @@ This robot follows a black line and avoids obstacles. It was assembled using the
 
 [https://www.youtube.com/watch?v=4PQgjjOqJa4](https://www.youtube.com/watch?v=4PQgjjOqJa4)
 
-presentation - 
+presentation -
+(https://www.canva.com/design/DAG2_m4myRM/E4sfgE1g1xukdQ06dYo1aA/edit?utm_content=DAG2_m4myRM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
+
 
 ## **Project Description**
 
