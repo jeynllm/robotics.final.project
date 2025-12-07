@@ -135,4 +135,29 @@ void setup(){
   for(int a=140; a>=0; a-=5) servoPulse(servo, a);
   for(int a=0; a<=70; a+=5) servoPulse(servo, a);
 }
+// added final loop logic for auto navigation and line following
+void loop(){
+  readBluetooth();
+
+
+  if(!AUTO_MODE) return;  // MANUAL mode
+
+
+  distance_F = Ultrasonic_read();
+
+
+  if(digitalRead(R_S)==0 && digitalRead(L_S)==0){
+    if(distance_F > Set) forward();
+    else Check_side();
+  }
+  else if(digitalRead(R_S)==1 && digitalRead(L_S)==0){
+    turnRight();
+  }
+  else if(digitalRead(R_S)==0 && digitalRead(L_S)==1){
+    turnLeft();
+  }
+
+
+  delay(10);
+}
 
