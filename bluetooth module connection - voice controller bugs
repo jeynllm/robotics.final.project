@@ -1,0 +1,3 @@
+we’ve checked the program with our new added function and it works properly over text 
+, but due to the voiced texts on the phone (it can change the first letter to upper or add the dot in the end) 
+the function is not working cause of the voice message in the phone itself
