@@ -26,3 +26,45 @@ delayMicroseconds(pwm);
 digitalWrite(pin, LOW); 
 delay(30); 
 }
+// adding obstacle avoiding  
+void compareDistance(){ 
+if(distance_L > distance_R){ 
+turnLeft(); 
+delay(500); 
+forward(); 
+delay(600); 
+turnRight(); 
+delay(500); 
+forward(); 
+delay(600); 
+turnRight();
+delay(400);
+}
+else { 
+turnRight();
+delay(500);
+forward();
+delay(600); 
+turnLeft(); 
+delay(500);
+forward(); 
+delay(600); 
+turnLeft(); 
+(400); 
+} 
+} 
+void Check_side(){ 
+Stop(); 
+delay(100); 
+for(int a=70; a<=140; a+=5)
+servoPulse(servo, a); 
+delay(300); 
+distance_R = Ultrasonic_read(); 
+for(int a=140; a>=0; a-=5) 
+servoPulse(servo, a);
+delay(300); 
+distance_L = Ultrasonic_read(); 
+for(int a=0; a<=70; a+=5) 
+servoPulse(servo, a); 
+compareDistance(); 
+}
